@@ -1,1 +1,66 @@
 # Arduino-code
+/* 
+  Project Name   : SMART HUT FOR STRAY ANIMALS
+  Revision Date  : 21.12.2021
+  Author         : Mehmet Sarıca
+  // ****************************************************************************************************************************
+  Purpose : To develop a device that can solve the problem of environmental damage and starvation of stray animals.
+  // ****************************************************************************************************************************
+  System Input  : 
+                  1)HC SR-04 : To measure the distance stray animals and food containers.
+  
+  System Output :
+                  1) SG90 RC Mini : to give rotational motion to food containers.
+  // ****************************************************************************************************************************  
+  System Work :  When the HC SR04 distance sensor detects a living thing, it directs a command to the SG90 RC mini servo motor, 
+                allowing the SG90 RC mini servo motor to actuate the food tubes.             
+  // ****************************************************************************************************************************
+ */
+
+
+
+#include<Servo.h>          /* Servo library is defined because it works with servo motor.*/
+Servo engine;              /* The SG90 RC mini servo motor is named. */
+
+
+const int trig = 8;       /* The trig pin of the HC SR-04 sensor is defined to the eighth pin on the arduino.*/
+const int echo = 7;       /* The echo pin of the HC SR-04 sensor is identified by the seventh pin on the arduino.*/
+int distance = 0;         /* A term named distance is defined. Zero is entered to measure the initial value in more detail.*/
+int sure = 0;             /* A term named duration is defined. Zero is entered to measure the initial value in more detail.*/
+int angle;                /* a certain angle is defined.*/
+
+void setup() {           
+pinMode(trig,OUTPUT);     /* It is entered as OUTPUT because it is the pin that allows the signal to be released.*/
+pinMode(echo,INPUT);      /* The echo pin is the pin that informs the Arduino that the reflected wave has arrived, so it is entered as INPUT.*/
+engine.attach(6);         /* Connected to the sixth pin on the arduino to send commands to the motor.*/
+Serial.begin(9600);       /* Communication speed is specified.*/
+ 
+
+}
+
+void loop() {
+  digitalWrite(trig,HIGH);     /* Activates when the sensor detects.*/
+  delayMicroseconds(2);        /* Indicates the delay in the detection time of the sensor.*/
+  digitalWrite(trig,LOW);     /*  Interaction ends when sensor detects.*/
+  delayMicroseconds(2);       /* Indicates the delay in the detection time of the sensor.*/
+
+  sure = pulseIn(echo,HIGH);  
+  distance = (sure/2)/29.1;   /* The necessary equations for the distance are given.*/
+
+ if(distance <= 10){          /* The distance settings are conditioned.*/
+
+    engine.write(180);        /* The angle of rotation of the motor is commanded.*/
+    delay(1000);              /* delay is indicated.*/
+  
+ }
+else{                         /* The distance settings are conditioned.*/
+  engine.write(0);
+  delay(1000);                /* delay is indicated.*/
+ }
+  Serial.print("Distance : ");  /*It is entered in order to inform the user on the serial port screen by instantaneously tracking the measured distance. */ 
+  Serial.print(distance);
+  Serial.println("  cm");
+  delay(100);
+  
+
+}
